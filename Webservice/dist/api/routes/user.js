@@ -4,7 +4,7 @@ const express_1 = require("express");
 const dUser = express_1.Router();
 exports.default = (app) => {
     app.use("/user", dUser);
-    //http://localhost:1234/user/login
+    //http://localhost:1234/api/user/login
     dUser.get("/login", (req, res) => {
         res.send("Login");
     });

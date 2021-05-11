@@ -1,23 +1,25 @@
 import * as jwt from "jsonwebtoken";
 import config from "../config";
+import {IDeviceWithoutToken} from "../interfaces/IDevice";
 
-function createToken(name: string, password: string) {
+export function createToken(name: string, password: string) {
   return jwt.sign({name: name, password: password}, config.jwt.secret);
 }
 
-function decodeToken(token: string) {
-  if (!token || !token.startsWith("BEARER") || token.length < 7) {
-    console.error("decode Token --> Fehler");
-    throw jwt.JsonWebTokenError;
+export function decodeToken(token: string): string | object {
+  try {
+    if (!token || !token.startsWith("Bearer") || token.length < 7) {
+      throw jwt.JsonWebTokenError;
+    }
+  } catch (err) {
+    console.error("decodeToken1 --> " + err);
   }
   let tk = token.substr(7, token.length);
 
-  let decoded;
   try {
-    decoded = jwt.verify(token, config.jwt.secret);
+    const decoded: string | object = jwt.verify(tk, config.jwt.secret);
+    return decoded;
   } catch (err) {
-    throw jwt.JsonWebTokenError;
+    console.error("decodeToken2 --> " + err);
   }
-
-
 }

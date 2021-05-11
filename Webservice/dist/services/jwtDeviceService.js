@@ -22,16 +22,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.decodeToken = exports.createToken = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 function createToken(name, password) {
     return jwt.sign({ name: name, password: password }, config_1.default.jwt.secret);
 }
+exports.createToken = createToken;
 function decodeToken(token) {
-    if (!token || !token.startsWith("BEARER") || token.length < 7) {
-        throw jwt.JsonWebTokenError;
+    try {
+        if (!token || !token.startsWith("Bearer") || token.length < 7) {
+            throw jwt.JsonWebTokenError;
+        }
+    }
+    catch (err) {
+        console.error("decodeToken1 --> " + err);
     }
     let tk = token.substr(7, token.length);
-    jwt.decode(token);
+    try {
+        const decoded = jwt.verify(tk, config_1.default.jwt.secret);
+        return decoded;
+    }
+    catch (err) {
+        console.error("decodeToken2 --> " + err);
+    }
 }
+exports.decodeToken = decodeToken;
 //# sourceMappingURL=jwtDeviceService.js.map

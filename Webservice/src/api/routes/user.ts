@@ -5,7 +5,7 @@ const dUser: Router = Router();
 export default (app: Router) => {
   app.use("/user",dUser);
 
-  //http://localhost:1234/user/login
+  //http://localhost:1234/api/user/login
   dUser.get("/login", (req, res) => {
     res.send("Login");
   });

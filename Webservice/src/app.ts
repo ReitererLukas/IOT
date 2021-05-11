@@ -17,7 +17,7 @@ async function main() {
   /**Create Test Data*/
   // for(let i = 0;i<10;i++){
   //   console.log("Created"+i);
-  //   addDevice(`Device${i}`,`password${i}`);
+  //   await addDevice(`Device${i}`,`password${i}`);
   // }
 }
 

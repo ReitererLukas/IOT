@@ -18,30 +18,69 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getDevice = exports.addDevice = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const AuthService_1 = require("../../services/AuthService");
+const jwtDeviceService_1 = require("../../services/jwtDeviceService");
 const DeviceSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     password: { type: String, required: true },
     token: { type: String },
 }, { versionKey: false });
+//generate Token
+DeviceSchema.pre('save', function (next) {
+    if (this.isModified("token")) {
+        this.token = jwtDeviceService_1.createToken(this.name, this.password);
+    }
+    next(); // will call the next hook
+});
 //hash password
 DeviceSchema.pre('save', function (next) {
+    if (this.token == null) {
+        next();
+    }
     if (this.isModified("password")) {
         this.password = AuthService_1.hashPassword(this.password);
     }
-    next(); //will call the next callback
+    next();
 });
-//generate Token
 // Export the model and return your IUser interface
 const deviceModel = mongoose_1.default.model('device', DeviceSchema);
-function addUser(name, password) {
-    deviceModel.create({
-        name: name,
-        password: password,
-        token: null
+// Adds a device
+function addDevice(name, password) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const created = yield deviceModel.create({
+            name: name,
+            password: password,
+            token: null
+        });
+        if (created.errors) {
+            console.error("addDevice --> " + created.errors.message);
+            throw created.errors;
+        }
     });
 }
-exports.default = addUser;
+exports.addDevice = addDevice;
+// Gets password of device (per name)
+function getDevice(name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const out = yield deviceModel.findOne({ name: name });
+        if (out.errors) {
+            console.error("getPassword --> " + out.errors.message);
+            throw out.errors;
+        }
+        return out;
+    });
+}
+exports.getDevice = getDevice;
 //# sourceMappingURL=device.js.map

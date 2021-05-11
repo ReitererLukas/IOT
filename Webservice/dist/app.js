@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const config_1 = __importDefault(require("./config"));
 const loaders_1 = __importDefault(require("./loaders"));
-const device_1 = __importDefault(require("./models/mongo/device"));
 const app = express_1.default();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -26,10 +25,10 @@ function main() {
             console.log(err);
         });
         /**Create Test Data*/
-        for (let i = 0; i < 10; i++) {
-            console.log("Created" + i);
-            device_1.default(`Device${i}`, `password${i}`);
-        }
+        // for(let i = 0;i<10;i++){
+        //   console.log("Created"+i);
+        //   await addDevice(`Device${i}`,`password${i}`);
+        // }
     });
 }
 main();
