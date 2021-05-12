@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const jwtDeviceService_1 = require("../../services/jwtDeviceService");
 const deviceService_1 = require("../../services/deviceService");
+const path_1 = __importDefault(require("path"));
+const deviceService_2 = require("../../services/deviceService");
 const dRouter = express_1.Router();
 exports.default = (app) => {
     app.use("/device", dRouter);
@@ -37,7 +42,6 @@ exports.default = (app) => {
         res.send("Set State for device");
     });
     dRouter.get("/getToken", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(req.body);
         if (Object.keys(req.body).length != 0) {
             let json = req.body;
             const token = yield deviceService_1.getToken(json.name, json.password);
@@ -48,10 +52,16 @@ exports.default = (app) => {
         }
     }));
     dRouter.get("/register", (req, res) => {
-        res.send("Register Device");
+        res.sendFile(path_1.default.join(__dirname, "../../../web/register.html"));
     });
-    dRouter.post("/register", (req, res) => {
-        res.send("Register Device");
-    });
+    dRouter.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        if (yield deviceService_2.registerDevice(req.body)) {
+            res.sendFile(path_1.default.join(__dirname, "../../../web/success.html"));
+        }
+        else {
+            res.sendFile(path_1.default.join(__dirname, "../../../web/error.html"));
+        }
+        // res.redirect("/api/device/register");
+    }));
 };
 //# sourceMappingURL=device.js.map

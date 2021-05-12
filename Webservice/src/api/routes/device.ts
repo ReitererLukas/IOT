@@ -1,6 +1,8 @@
 import {Router} from "express";
 import {decodeToken} from "../../services/jwtDeviceService";
-import {verifyDevice,getToken} from "../../services/deviceService";
+import {verifyDevice, getToken} from "../../services/deviceService";
+import path from "path";
+import {registerDevice} from "../../services/deviceService";
 
 const dRouter: Router = Router();
 
@@ -22,7 +24,7 @@ export default (app: Router) => {
     const device = decodeToken(req.headers.authorization);
 
     // checks if token is valid
-    if(!device || !await verifyDevice((device as { name: string, password: string, iat: string }).name, (device as { name: string, password: string, iat: string }).password)) {
+    if (!device || !await verifyDevice((device as { name: string, password: string, iat: string }).name, (device as { name: string, password: string, iat: string }).password)) {
       res.send("not available2");
       res.status(511).send;
       return;
@@ -37,21 +39,28 @@ export default (app: Router) => {
 
   dRouter.get("/getToken", async (req, res) => {
     if (Object.keys(req.body).length != 0) {
-      let json = (req.body as {name:string,password:string});
-      const token = await getToken(json.name,json.password);
-      res.json({token:token});
-    } else
-    {
+      let json = (req.body as { name: string, password: string });
+      const token = await getToken(json.name, json.password);
+      res.json({token: token});
+    } else {
       res.send("Get Token");
     }
   });
 
   dRouter.get("/register", (req, res) => {
-    res.send("Register Device");
+    res.sendFile(path.join(__dirname,"../../../web/register.html"));
   });
 
-  dRouter.post("/register", (req, res) => {
-    res.send("Register Device");
+  dRouter.post("/register",async (req, res) => {
+    if(await registerDevice(req.body)) {
+      res.sendFile(path.join(__dirname,"../../../web/success.html"));
+    }
+    else {
+      res.sendFile(path.join(__dirname,"../../../web/error.html"));
+    }
+
+    // res.redirect("/api/device/register");
+
   });
 
 }

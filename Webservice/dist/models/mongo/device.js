@@ -33,7 +33,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const AuthService_1 = require("../../services/AuthService");
 const jwtDeviceService_1 = require("../../services/jwtDeviceService");
 const DeviceSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     token: { type: String },
 }, { versionKey: false });
@@ -59,15 +59,11 @@ const deviceModel = mongoose_1.default.model('device', DeviceSchema);
 // Adds a device
 function addDevice(name, password) {
     return __awaiter(this, void 0, void 0, function* () {
-        const created = yield deviceModel.create({
+        yield deviceModel.create({
             name: name,
             password: password,
             token: null
         });
-        if (created.errors) {
-            console.error("addDevice --> " + created.errors.message);
-            throw created.errors;
-        }
     });
 }
 exports.addDevice = addDevice;
@@ -75,6 +71,10 @@ exports.addDevice = addDevice;
 function getDevice(name) {
     return __awaiter(this, void 0, void 0, function* () {
         const out = yield deviceModel.findOne({ name: name });
+        if (out === null) {
+            console.error("getPassword --> " + "Device-Name existiert bereits");
+            throw Error;
+        }
         if (out.errors) {
             console.error("getPassword --> " + out.errors.message);
             throw out.errors;

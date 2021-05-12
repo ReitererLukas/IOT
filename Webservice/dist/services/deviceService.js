@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getToken = exports.verifyDevice = exports.getDeviceState = void 0;
+exports.registerDevice = exports.getToken = exports.verifyDevice = exports.getDeviceState = void 0;
 const device_1 = require("../models/mongo/device");
 const AuthService_1 = require("./AuthService");
+const device_2 = require("../models/mongo/device");
 /**Connection to the DB to get the state of the device*/
 function getDeviceState(token) {
 }
@@ -34,4 +35,20 @@ function getToken(name, password) {
     });
 }
 exports.getToken = getToken;
+function registerDevice(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (params.password1 != params.password2) {
+            return false;
+        }
+        try {
+            yield device_2.addDevice(params.name, params.password1);
+            return true;
+        }
+        catch (err) {
+            console.log("Fehler --> " + err);
+            return false;
+        }
+    });
+}
+exports.registerDevice = registerDevice;
 //# sourceMappingURL=deviceService.js.map
