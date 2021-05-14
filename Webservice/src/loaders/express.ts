@@ -1,5 +1,6 @@
 import express from "express";
-import routes from "../api";
+import apiRoutes from "../api";
+import webRoutes from "../web/routes";
 import config from "../config";
 import path from "path";
 
@@ -12,10 +13,8 @@ export default (app: express.Application) => {
   }));
 
   // enable API Endpoints
-  app.use(config.apiprefix, routes());
+  app.use(config.apiprefix, apiRoutes());
+  app.use(webRoutes());
 
-  //http://localhost:5000
-  app.get("/",(req,res)=>{
-    res.sendFile(path.join(__dirname,"../../web/start.html"));
-  });
+
 }

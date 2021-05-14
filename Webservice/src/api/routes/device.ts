@@ -3,7 +3,7 @@ import {decodeToken} from "../../services/jwtDeviceService";
 import {verifyDevice, getToken} from "../../services/deviceService";
 import path from "path";
 import {registerDevice} from "../../services/deviceService";
-import {getDevice} from "../../models/mongo/device";
+import {getDevice, changeState} from "../../models/mongo/device";
 
 const dRouter: Router = Router();
 
@@ -22,7 +22,7 @@ export default (app: Router) => {
     }
 
     // gets Token
-    const token = decodeToken(req.headers.authorization) as {name: string, password: string, iat: string};
+    const token = decodeToken(req.headers.authorization) as { name: string, password: string, iat: string };
 
     // checks if token is valid
     if (!token || !await verifyDevice(token.name, token.password)) {
@@ -32,9 +32,14 @@ export default (app: Router) => {
     }
 
     const device = await getDevice(token.name);
-    res.json({state:device.state});
+    res.json({state: device.state});
   });
 
+  dRouter.post("/state", async (req, res) => {
+    const name: string = (req.body as { deviceName: string }).deviceName;
+    await changeState(name);
+    res.redirect("/device/state");
+  });
 
   dRouter.get("/token", async (req, res) => {
     if (Object.keys(req.body).length != 0) {
@@ -46,16 +51,11 @@ export default (app: Router) => {
     }
   });
 
-  dRouter.get("/register", (req, res) => {
-    res.sendFile(path.join(__dirname,"../../../web/register.html"));
-  });
-
-  dRouter.post("/register",async (req, res) => {
-    if(await registerDevice(req.body)) {
-      res.sendFile(path.join(__dirname,"../../../web/success.html"));
-    }
-    else {
-      res.sendFile(path.join(__dirname,"../../../web/error.html"));
+  dRouter.post("/register", async (req, res) => {
+    if (await registerDevice(req.body)) {
+      res.sendFile(path.join(__dirname, "../../../web/success.html"));
+    } else {
+      res.sendFile(path.join(__dirname, "../../../web/error.html"));
     }
   });
 

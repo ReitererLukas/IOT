@@ -28,7 +28,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDevice = exports.addDevice = void 0;
+exports.changeState = exports.getDevice = exports.addDevice = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const AuthService_1 = require("../../services/AuthService");
 const jwtDeviceService_1 = require("../../services/jwtDeviceService");
@@ -73,8 +73,8 @@ exports.addDevice = addDevice;
 function getDevice(name) {
     return __awaiter(this, void 0, void 0, function* () {
         const out = yield deviceModel.findOne({ name: name });
-        if (out === null) {
-            console.error("getPassword --> " + "Device-Name existiert bereits");
+        if (out == null) {
+            console.error("getPassword --> " + "Device-Name existiert nicht");
             throw Error;
         }
         if (out.errors) {
@@ -85,4 +85,14 @@ function getDevice(name) {
     });
 }
 exports.getDevice = getDevice;
+function changeState(name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const device = yield getDevice(name);
+        console.log(device.state);
+        const newState = (parseInt("" + device.state) + 1) % 2;
+        console.log(newState);
+        yield deviceModel.updateOne({ name: name }, { $set: { state: newState } });
+    });
+}
+exports.changeState = changeState;
 //# sourceMappingURL=device.js.map

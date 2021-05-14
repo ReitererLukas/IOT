@@ -2,6 +2,7 @@ import mongoose, {Schema, Document, Model} from "mongoose";
 import {IDevice, DeviceBaseDocument} from "../../interfaces/IDevice";
 import {hashPassword} from "../../services/AuthService";
 import {createToken} from "../../services/jwtDeviceService";
+import device from "../../api/routes/device";
 
 const DeviceSchema: Schema = new Schema({
   name: {type: String, required: true, unique: true},
@@ -46,8 +47,8 @@ export async function addDevice(name: string, password: string) {
 // Gets password of device (per name)
 export async function getDevice(name: string) {
     const out = await deviceModel.findOne({name: name});
-    if (out === null) {
-      console.error("getPassword --> " + "Device-Name existiert bereits");
+    if (out == null) {
+      console.error("getPassword --> " + "Device-Name existiert nicht");
       throw Error;
     }
     if (out.errors) {
@@ -55,4 +56,10 @@ export async function getDevice(name: string) {
       throw out.errors;
     }
     return out;
+}
+
+export async function changeState(name: string) {
+  const device = await getDevice(name);
+  const newState:number = (parseInt(""+device.state)+1)%2;
+  await deviceModel.updateOne({name: name},{$set:{state: newState}});
 }

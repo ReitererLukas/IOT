@@ -40,6 +40,11 @@ exports.default = (app) => {
         const device = yield device_1.getDevice(token.name);
         res.json({ state: device.state });
     }));
+    dRouter.post("/state", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const name = req.body.deviceName;
+        yield device_1.changeState(name);
+        res.redirect("/device/state");
+    }));
     dRouter.get("/token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (Object.keys(req.body).length != 0) {
             let json = req.body;
@@ -50,9 +55,6 @@ exports.default = (app) => {
             res.send("Get Token");
         }
     }));
-    dRouter.get("/register", (req, res) => {
-        res.sendFile(path_1.default.join(__dirname, "../../../web/register.html"));
-    });
     dRouter.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (yield deviceService_2.registerDevice(req.body)) {
             res.sendFile(path_1.default.join(__dirname, "../../../web/success.html"));
