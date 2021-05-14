@@ -3,6 +3,7 @@ import {decodeToken} from "../../services/jwtDeviceService";
 import {verifyDevice, getToken} from "../../services/deviceService";
 import path from "path";
 import {registerDevice} from "../../services/deviceService";
+import {getDevice} from "../../models/mongo/device";
 
 const dRouter: Router = Router();
 
@@ -21,23 +22,21 @@ export default (app: Router) => {
     }
 
     // gets Token
-    const device = decodeToken(req.headers.authorization);
+    const token = decodeToken(req.headers.authorization) as {name: string, password: string, iat: string};
 
     // checks if token is valid
-    if (!device || !await verifyDevice((device as { name: string, password: string, iat: string }).name, (device as { name: string, password: string, iat: string }).password)) {
+    if (!token || !await verifyDevice(token.name, token.password)) {
       res.send("not available2");
       res.status(511).send;
       return;
     }
 
-    res.send("Get State for device");
+    const device = await getDevice(token.name);
+    res.json({state:device.state});
   });
 
-  dRouter.post("/state", (req, res) => {
-    res.send("Set State for device");
-  });
 
-  dRouter.get("/getToken", async (req, res) => {
+  dRouter.get("/token", async (req, res) => {
     if (Object.keys(req.body).length != 0) {
       let json = (req.body as { name: string, password: string });
       const token = await getToken(json.name, json.password);
@@ -58,9 +57,6 @@ export default (app: Router) => {
     else {
       res.sendFile(path.join(__dirname,"../../../web/error.html"));
     }
-
-    // res.redirect("/api/device/register");
-
   });
 
 }

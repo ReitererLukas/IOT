@@ -9,7 +9,7 @@ async function main() {
   await load(app);
 
   app.listen(config.port, () => {
-    return console.info(`Express is listening on http://localhost:${config.port}/welcome`);
+    return console.info(`Express is listening on http://localhost:${config.port}`);
   }).on('error', function (err) {
     console.log(err)
   });

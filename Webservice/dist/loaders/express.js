@@ -15,7 +15,7 @@ exports.default = (app) => {
     }));
     // enable API Endpoints
     app.use(config_1.default.apiprefix, api_1.default());
-    //http://localhost:5000/welcome
+    //http://localhost:5000
     app.get("/", (req, res) => {
         res.sendFile(path_1.default.join(__dirname, "../../web/start.html"));
     });

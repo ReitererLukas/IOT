@@ -36,6 +36,7 @@ const DeviceSchema = new mongoose_1.Schema({
     name: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     token: { type: String },
+    state: { type: String }
 }, { versionKey: false });
 //generate Token
 DeviceSchema.pre('save', function (next) {
@@ -62,7 +63,8 @@ function addDevice(name, password) {
         yield deviceModel.create({
             name: name,
             password: password,
-            token: null
+            token: null,
+            state: 1
         });
     });
 }

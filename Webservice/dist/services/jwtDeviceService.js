@@ -40,8 +40,7 @@ function decodeToken(token) {
     }
     let tk = token.substr(7, token.length);
     try {
-        const decoded = jwt.verify(tk, config_1.default.jwt.secret);
-        return decoded;
+        return jwt.verify(tk, config_1.default.jwt.secret);
     }
     catch (err) {
         console.error("decodeToken2 --> " + err);

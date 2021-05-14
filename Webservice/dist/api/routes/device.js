@@ -17,6 +17,7 @@ const jwtDeviceService_1 = require("../../services/jwtDeviceService");
 const deviceService_1 = require("../../services/deviceService");
 const path_1 = __importDefault(require("path"));
 const deviceService_2 = require("../../services/deviceService");
+const device_1 = require("../../models/mongo/device");
 const dRouter = express_1.Router();
 exports.default = (app) => {
     app.use("/device", dRouter);
@@ -29,19 +30,17 @@ exports.default = (app) => {
             return;
         }
         // gets Token
-        const device = jwtDeviceService_1.decodeToken(req.headers.authorization);
+        const token = jwtDeviceService_1.decodeToken(req.headers.authorization);
         // checks if token is valid
-        if (!device || !(yield deviceService_1.verifyDevice(device.name, device.password))) {
+        if (!token || !(yield deviceService_1.verifyDevice(token.name, token.password))) {
             res.send("not available2");
             res.status(511).send;
             return;
         }
-        res.send("Get State for device");
+        const device = yield device_1.getDevice(token.name);
+        res.json({ state: device.state });
     }));
-    dRouter.post("/state", (req, res) => {
-        res.send("Set State for device");
-    });
-    dRouter.get("/getToken", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    dRouter.get("/token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (Object.keys(req.body).length != 0) {
             let json = req.body;
             const token = yield deviceService_1.getToken(json.name, json.password);
@@ -61,7 +60,6 @@ exports.default = (app) => {
         else {
             res.sendFile(path_1.default.join(__dirname, "../../../web/error.html"));
         }
-        // res.redirect("/api/device/register");
     }));
 };
 //# sourceMappingURL=device.js.map

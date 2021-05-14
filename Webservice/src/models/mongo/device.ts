@@ -7,6 +7,7 @@ const DeviceSchema: Schema = new Schema({
   name: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   token: {type: String},
+  state: {type: String}
 }, {versionKey: false});
 
 //generate Token
@@ -37,7 +38,8 @@ export async function addDevice(name: string, password: string) {
     await deviceModel.create({
       name: name,
       password: password,
-      token: null
+      token: null,
+      state: 1
     });
 }
 
@@ -53,5 +55,4 @@ export async function getDevice(name: string) {
       throw out.errors;
     }
     return out;
-
 }

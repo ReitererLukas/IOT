@@ -1,6 +1,5 @@
 import * as jwt from "jsonwebtoken";
 import config from "../config";
-import {IDeviceWithoutToken} from "../interfaces/IDevice";
 
 export function createToken(name: string, password: string) {
   return jwt.sign({name: name, password: password}, config.jwt.secret);
@@ -17,8 +16,7 @@ export function decodeToken(token: string): string | object {
   let tk = token.substr(7, token.length);
 
   try {
-    const decoded: string | object = jwt.verify(tk, config.jwt.secret);
-    return decoded;
+    return (jwt.verify(tk, config.jwt.secret) as string | object);
   } catch (err) {
     console.error("decodeToken2 --> " + err);
   }

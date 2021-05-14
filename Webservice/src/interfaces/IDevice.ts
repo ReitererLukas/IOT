@@ -4,16 +4,13 @@ export interface IDevice extends Document {
   name: string;
   password:string
   token: string
-}
-
-export interface IDeviceWithoutToken extends Document {
-  name: string;
-  password:string
+  state: number
 }
 
 export interface DeviceBaseDocument extends IDevice, Document {
   name: string;
   password:string
   token: string
+  state: number
 }
 

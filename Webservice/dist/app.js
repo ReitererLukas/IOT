@@ -20,7 +20,7 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield loaders_1.default(app);
         app.listen(config_1.default.port, () => {
-            return console.info(`Express is listening on http://localhost:${config_1.default.port}/welcome`);
+            return console.info(`Express is listening on http://localhost:${config_1.default.port}`);
         }).on('error', function (err) {
             console.log(err);
         });
