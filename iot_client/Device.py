@@ -3,6 +3,7 @@ class Device:
         self.name = name
         self.password = password
         self.token = token
+        self.state = 0
         pass
 
     def __repr__(self)->str:
