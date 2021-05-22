@@ -64,7 +64,7 @@ function addDevice(name, password) {
             name: name,
             password: password,
             token: null,
-            state: 1
+            state: 0
         });
     });
 }
@@ -88,9 +88,7 @@ exports.getDevice = getDevice;
 function changeState(name) {
     return __awaiter(this, void 0, void 0, function* () {
         const device = yield getDevice(name);
-        console.log(device.state);
         const newState = (parseInt("" + device.state) + 1) % 2;
-        console.log(newState);
         yield deviceModel.updateOne({ name: name }, { $set: { state: newState } });
     });
 }

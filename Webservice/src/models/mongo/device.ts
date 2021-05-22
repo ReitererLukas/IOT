@@ -40,7 +40,7 @@ export async function addDevice(name: string, password: string) {
       name: name,
       password: password,
       token: null,
-      state: 1
+      state: 0
     });
 }
 
